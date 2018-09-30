@@ -5,10 +5,10 @@
   <evaluateDefaultValues active="0"/>
   <layer-tree-group expanded="1" checked="Qt::Checked" name="">
     <customproperties/>
-    <layer-tree-layer expanded="0" providerKey="ogr" checked="Qt::Checked" id="real20180913185832145" source="C:\Users\yoon\Desktop\2018-2\DST\real.shp" name="real">
+    <layer-tree-layer expanded="0" providerKey="ogr" checked="Qt::Checked" id="real20180913185832145" source="C:/Users/yoon/Desktop/2018-2/DST/real.shp" name="real">
       <customproperties/>
     </layer-tree-layer>
-    <layer-tree-layer expanded="1" providerKey="" checked="Qt::Checked" id="OpenLayers_plugin_layer20180913185815116" source="" name="Naver Street">
+    <layer-tree-layer expanded="1" providerKey="" checked="Qt::Checked" id="OpenLayers_plugin_layer20180916152043608" source="" name="Naver Street">
       <customproperties/>
     </layer-tree-layer>
   </layer-tree-group>
@@ -16,10 +16,10 @@
   <mapcanvas>
     <units>meters</units>
     <extent>
-      <xmin>880782.41501045855693519</xmin>
-      <ymin>1476992.74517967505380511</ymin>
-      <xmax>918683.21130274632014334</xmax>
-      <ymax>1508276.95883968193084002</ymax>
+      <xmin>904772.29111577803269029</xmin>
+      <ymin>1496980.99098077812232077</ymin>
+      <xmax>915988.61055248114280403</xmax>
+      <ymax>1506239.20632355497218668</ymax>
     </extent>
     <rotation>0</rotation>
     <projections>1</projections>
@@ -37,6 +37,7 @@
     </destinationsrs>
     <rendermaptile>0</rendermaptile>
     <layer_coordinate_transform_info>
+      <layer_coordinate_transform destAuthId="EPSG:5179" srcAuthId="EPSG:5179" srcDatumTransform="-1" destDatumTransform="-1" layerid="OpenLayers_plugin_layer20180916152043608"/>
       <layer_coordinate_transform destAuthId="EPSG:5179" srcAuthId="USER:100000" srcDatumTransform="-1" destDatumTransform="-1" layerid="real20180913185753348"/>
       <layer_coordinate_transform destAuthId="EPSG:5179" srcAuthId="EPSG:5179" srcDatumTransform="-1" destDatumTransform="-1" layerid="OpenLayers_plugin_layer20180913185815116"/>
       <layer_coordinate_transform destAuthId="EPSG:5179" srcAuthId="EPSG:5179" srcDatumTransform="-1" destDatumTransform="-1" layerid="OpenLayers_plugin_layer20180913185707301"/>
@@ -46,8 +47,8 @@
   </mapcanvas>
   <layer-tree-canvas>
     <custom-order enabled="0">
-      <item>OpenLayers_plugin_layer20180913185815116</item>
       <item>real20180913185832145</item>
+      <item>OpenLayers_plugin_layer20180916152043608</item>
     </custom-order>
   </layer-tree-canvas>
   <legend updateDrawingOrder="true">
@@ -58,7 +59,7 @@
     </legendlayer>
     <legendlayer drawingOrder="-1" open="true" checked="Qt::Checked" name="Naver Street" showFeatureCount="0">
       <filegroup open="true" hidden="false">
-        <legendlayerfile isInOverview="0" layerid="OpenLayers_plugin_layer20180913185815116" visible="1"/>
+        <legendlayerfile isInOverview="0" layerid="OpenLayers_plugin_layer20180916152043608" visible="1"/>
       </filegroup>
     </legendlayer>
   </legend>
@@ -70,7 +71,7 @@
         <xmax>1990673</xmax>
         <ymax>2761664</ymax>
       </extent>
-      <id>OpenLayers_plugin_layer20180913185815116</id>
+      <id>OpenLayers_plugin_layer20180916152043608</id>
       <datasource></datasource>
       <keywordList>
         <value></value>
@@ -47667,6 +47668,7 @@
       <SingleCategoryDiagramRenderer diagramType="Histogram" sizeLegend="0" attributeLegend="1">
         <DiagramCategory penColor="#000000" labelPlacementMethod="XHeight" penWidth="0" diagramOrientation="Up" sizeScale="0,0,0,0,0,0" minimumSize="0" barWidth="5" penAlpha="255" maxScaleDenominator="1e+08" backgroundColor="#ffffff" transparency="0" width="15" scaleDependency="Area" backgroundAlpha="255" angleOffset="1440" scaleBasedVisibility="0" enabled="0" height="15" lineSizeScale="0,0,0,0,0,0" sizeType="MM" lineSizeType="MM" minScaleDenominator="inf">
           <fontProperties description="Gulim,9,-1,5,50,0,0,0,0,0" style=""/>
+          <attribute field="" color="#000000" label=""/>
         </DiagramCategory>
         <symbol alpha="1" clip_to_extent="1" type="marker" name="sizeSymbol">
           <layer pass="0" class="SimpleMarker" locked="0">
@@ -47692,7 +47694,7 @@
         </symbol>
       </SingleCategoryDiagramRenderer>
       <DiagramLayerSettings yPosColumn="-1" showColumn="-1" linePlacementFlags="10" placement="0" dist="0" xPosColumn="-1" priority="0" obstacle="0" zIndex="0" showAll="1"/>
-      <annotationform></annotationform>
+      <annotationform>.</annotationform>
       <aliases>
         <alias field="Y_INDEX" index="0" name=""/>
         <alias field="X_INDEX" index="1" name=""/>
@@ -47751,7 +47753,7 @@
       <excludeAttributesWMS/>
       <excludeAttributesWFS/>
       <attributeactions default="-1"/>
-      <attributetableconfig actionWidgetStyle="dropDown" sortExpression="" sortOrder="102">
+      <attributetableconfig actionWidgetStyle="dropDown" sortExpression="" sortOrder="0">
         <columns>
           <column width="-1" hidden="0" type="field" name="Y_INDEX"/>
           <column width="-1" hidden="0" type="field" name="X_INDEX"/>
@@ -47809,10 +47811,10 @@
           <column width="-1" hidden="1" type="actions"/>
         </columns>
       </attributetableconfig>
-      <editform></editform>
+      <editform>.</editform>
       <editforminit/>
       <editforminitcodesource>0</editforminitcodesource>
-      <editforminitfilepath></editforminitfilepath>
+      <editforminitfilepath>.</editforminitfilepath>
       <editforminitcode><![CDATA[# -*- coding: utf-8 -*-
 """
 QGIS forms can have a Python function that is called when the form is
