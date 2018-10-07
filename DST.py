@@ -1,10 +1,13 @@
 import numpy as np
 import datetime as dt
 
-my_data1 = np.genfromtxt('jeju_people_data_all.csv', encoding="utf8", dtype = np.float64) # 유동인구 정보
+my_data1 = np.genfromtxt('temp.csv', encoding="utf8", dtype = np.float64) # 유동인구 정보
 my_data2 = np.genfromtxt('jeju_time.csv', encoding="utf8", dtype = np.int64, delimiter = ',', filling_values = '0') # 이동시간 정보
+my_time = dt.time(12, 23, 00)
+fa = np.zeros((100,24)) #필요 유동인구 정보
+ft = np.zeros((100,100)) #필요 이동시간 정보
 
-my_time = dt.time(12, 23, 32)
+
 
 #해당 여행지 전체 그리드의 유동인구 합을 구해주는 함수
 def cal_people_sum(final_people, x_range_min, x_range_max, y_range_min, y_range_max):
@@ -26,9 +29,12 @@ def cal_people_sum(final_people, x_range_min, x_range_max, y_range_min, y_range_
         add_all += final_people[i]
     
     for i in range(0,24):
-        final_people[i] = final_people[i] * 100 / add_all        
-            
-fa = np.zeros((100,24))
+        final_people[i] = final_people[i] * 100 / add_all
+        
+        
+        
+        
+#여행지 그리드 통합 유동인구 계산
 cal_people_sum(fa[0], 894250, 895000, 1477750, 1478500)
 cal_people_sum(fa[1], 886750, 887750, 1479500, 1480250)
 cal_people_sum(fa[2], 891750, 892250, 1474000, 1474500)
@@ -48,8 +54,92 @@ cal_people_sum(fa[15], 883250, 883750, 1470000, 1470500)
 cal_people_sum(fa[16], 885500, 886000, 1470250, 1470750)
 cal_people_sum(fa[17], 884000, 884500, 1469500, 1469750)
 
-ft = np.zeros((100,100))
-ft = my_data2
+
+
+
+#이동시간 정리
+ftTemp = np.zeros((100,100))
+ftTemp = my_data2
+for i in range (0,18):
+    for j in range (0,18):
+        ft[i][j] = ftTemp[i+1][j+1]
+
+
+
+
+# 필요시간은 00 - 01 과 같은 1시간 단위이므로 이를 찾아주는 함수
+def time_array():
+    for i in range(0,23):
+        if(my_time >= dt.time(0+i,0,0) and my_time < dt.time(1+i, 0, 0)):
+            
+            return 0+i
+
+
+
+
+#입력받은 여행지들중 (유동인구 + 이동시간 이용) 다음 이동지를 결정해주는 함수
+def cal_choice(mv_people_array, start):
+    point_max = 1000
+    point = 1
+    point_temp = 0
+    time_hap = 0 
+    people_hap = 0
+    
+    for i in mv_people_array:
+        people_hap += fa[i][time_array()]
+        time_hap += ft[start][i]
+    
+    print("유동인구 합 : ", people_hap, "시간 합 : ", time_hap)    
+    for i in mv_people_array:
+        if(ft[start][i] < 25):
+            point_temp = ft[start][i] / time_hap + fa[i][time_array()] / people_hap
+            print(start,"에서 ", i , "번째 노드로 이동 시 point : ", point_temp)
+            print(i, " 위치의 유동인구 : ", fa[i][time_array()], "이동 시간 : ", ft[start][i])
+        else:
+            point_temp = (ft[start][i] / time_hap + fa[i][time_array()] / people_hap) * point_max
+            
+        if(point > point_temp):
+            
+            point = point_temp
+            choose_loc = i
+            time_temp = ft[start][i] + 60
+            
+            
+    delta = dt.timedelta(minutes = time_temp)
+    global my_time
+    my_time = ((dt.datetime.combine(dt.date(1,1,1),my_time) + delta).time())
+    mv_people_array.remove(choose_loc)
+    print(choose_loc, "노드로 이동 결정 \n 이동 후 시간 : ", my_time)
+    
+    if(len(mv_people_array) <= 1):
+        delta = dt.timedelta(minutes = ft[choose_loc][mv_people_array[0]] + 60)
+        my_time = ((dt.datetime.combine(dt.date(1,1,1),my_time) + delta).time())
+    return choose_loc
+
+
+
+
+#main
+print("all node : ")
+
+all_node = list(map(int, input().split()))
+now_node = all_node[0]
+all_node.remove(now_node)
+final_node = []
+final_node.append(now_node)
+
+while(len(all_node) > 1):
+    print("\n남은 노드  : ", all_node)
+    now_node = cal_choice(all_node, now_node)
+    
+    final_node.append(now_node)
+
+final_node.append(all_node[0])
+print("\n\n최종 경로 : ", final_node, "최종 도착 시간 : ", my_time)
+
+
+
+
 
 '''
 final_array 정보
