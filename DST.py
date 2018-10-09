@@ -3,7 +3,7 @@ import datetime as dt
 
 my_data1 = np.genfromtxt('temp.csv', encoding="utf8", dtype = np.float64) # 유동인구 정보
 my_data2 = np.genfromtxt('jeju_time.csv', encoding="utf8", dtype = np.int64, delimiter = ',', filling_values = '0') # 이동시간 정보
-my_time = dt.time(12, 23, 00)
+my_time = dt.time(12, 00, 00)
 fa = np.zeros((100,24)) #필요 유동인구 정보
 ft = np.zeros((100,100)) #필요 이동시간 정보
 
@@ -68,54 +68,53 @@ for i in range (0,18):
 
 
 # 필요시간은 00 - 01 과 같은 1시간 단위이므로 이를 찾아주는 함수
-def time_array():
+def time_array(clock):
     for i in range(0,23):
-        if(my_time >= dt.time(0+i,0,0) and my_time < dt.time(1+i, 0, 0)):
+        if(clock >= dt.time(0+i,0,0) and clock < dt.time(1+i, 0, 0)):
             
             return 0+i
 
 
 
 
-#입력받은 여행지들중 (유동인구 + 이동시간 이용) 다음 이동지를 결정해주는 함수
-def cal_choice(mv_people_array, start):
-    point_max = 1000
-    point = 1
-    point_temp = 0
-    time_hap = 0 
-    people_hap = 0
-    
-    for i in mv_people_array:
-        people_hap += fa[i][time_array()]
-        time_hap += ft[start][i]
-    
-    print("유동인구 합 : ", people_hap, "시간 합 : ", time_hap)    
-    for i in mv_people_array:
-        if(ft[start][i] < 25):
-            point_temp = ft[start][i] / time_hap + fa[i][time_array()] / people_hap
-            print(start,"에서 ", i , "번째 노드로 이동 시 point : ", point_temp)
-            print(i, " 위치의 유동인구 : ", fa[i][time_array()], "이동 시간 : ", ft[start][i])
-        else:
-            point_temp = (ft[start][i] / time_hap + fa[i][time_array()] / people_hap) * point_max
-            
-        if(point > point_temp):
-            
-            point = point_temp
-            choose_loc = i
-            time_temp = ft[start][i] + 60
-            
-            
-    delta = dt.timedelta(minutes = time_temp)
-    global my_time
-    my_time = ((dt.datetime.combine(dt.date(1,1,1),my_time) + delta).time())
-    mv_people_array.remove(choose_loc)
-    print(choose_loc, "노드로 이동 결정 \n 이동 후 시간 : ", my_time)
-    
-    if(len(mv_people_array) <= 1):
-        delta = dt.timedelta(minutes = ft[choose_loc][mv_people_array[0]] + 60)
-        my_time = ((dt.datetime.combine(dt.date(1,1,1),my_time) + delta).time())
-    return choose_loc
+# 경로별 점수 합산(TSP 완전탐색)    
+routes = []
 
+def find_path(all_node, node, path, td, pd, clock):
+    path.append(node)
+    if len(path) > 1:
+        delta = dt.timedelta(minutes = ft[path[-2]][node] + 60)
+        clock = ((dt.datetime.combine(dt.date(1,1,1),clock) + delta).time())
+        print(clock)
+        td += (ft[path[-2]][node])
+        pd += fa[node][time_array(clock)]
+    if(len(all_node) == len(path)):
+        global routes
+        routes.append([td, pd, path])
+        return
+    
+    for city in all_node:
+        if(city not in path):
+            find_path(all_node, city, list(path), td, pd, clock)
+                
+                
+                
+                
+
+def best_choice(arr):
+    all_time = 0
+    all_people = 0
+    best_node = []
+    best_point = 1000
+    for i in arr:
+        all_time += i[0]
+        all_people += i[1]
+    for i in arr:
+        if(best_point > (i[0] / all_time) + (i[1] / all_people)):
+            best_point = (i[0] / all_time) + (i[1] / all_people)
+            best_node = i[2]
+        print((i[0] / all_time) + (i[1] / all_people), i[2])
+    return best_node
 
 
 
@@ -124,20 +123,12 @@ print("all node : ")
 
 all_node = list(map(int, input().split()))
 now_node = all_node[0]
-all_node.remove(now_node)
-final_node = []
-final_node.append(now_node)
 
-while(len(all_node) > 1):
-    print("\n남은 노드  : ", all_node)
-    now_node = cal_choice(all_node, now_node)
-    
-    final_node.append(now_node)
-
-final_node.append(all_node[0])
-print("\n\n최종 경로 : ", final_node, "최종 도착 시간 : ", my_time)
-
-
+find_path(all_node, now_node, [], 0, 0,my_time)
+for i in routes:
+    print(i)
+choice = best_choice(routes)
+print(choice)
 
 
 
