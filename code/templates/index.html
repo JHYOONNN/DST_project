@@ -1,0 +1,147 @@
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <title>simpleMap</title>
+        <script src="https://api2.sktelecom.com/tmap/js?version=1&format=javascript&appKey=7ad5e39d-84cc-4a33-98ee-fbf820a62181"></script>
+        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+        <script type="text/javascript">
+			function initTmap(){
+				var map = new Tmap.Map({
+					div:'map_div',
+					width : "70%",
+					height : "100%",
+          });
+
+        var addr = JSON.parse("{{geo}}");
+        var addr_length = {{length|tojson}};
+
+				map.setCenter(new Tmap.LonLat(addr[0][1], addr[0][0]).transform("EPSG:4326", "EPSG:3857"), 12);
+        routeLayer = new Tmap.Layer.Vector("route");
+        map.addLayer(routeLayer);
+
+        markerStartLayer = new Tmap.Layer.Markers("start");
+        markerEndLayer = new Tmap.Layer.Markers("end");
+        markerWaypointLayer = new Tmap.Layer.Markers("waypoint");
+        pointLayer = new Tmap.Layer.Vector("point");
+
+        // 2. 시작, 도착 심볼찍기
+        // 시작
+        map.addLayer(markerStartLayer);
+
+        var size = new Tmap.Size(24, 38);
+        var offset = new Tmap.Pixel(-(size.w / 2), -size.h);
+        var icon = new Tmap.IconHtml("<img src='http://tmapapis.sktelecom.com/upload/tmap/marker/pin_r_m_s.png' />", size, offset);
+        var marker_s = new Tmap.Marker(new Tmap.LonLat(addr[0][1], addr[0][0]).transform("EPSG:4326", "EPSG:3857"), icon);
+        markerStartLayer.addMarker(marker_s);
+
+        // 도착
+        map.addLayer(markerEndLayer);
+
+        var size = new Tmap.Size(24, 38);
+        var offset = new Tmap.Pixel(-(size.w / 2), -size.h);
+        var icon = new Tmap.IconHtml("<img src='http://tmapapis.sktelecom.com/upload/tmap/marker/pin_r_m_e.png' />", size, offset);
+        var marker_e = new Tmap.Marker(new Tmap.LonLat(addr[addr_length -1][1], addr[addr_length -1][0]).transform("EPSG:4326", "EPSG:3857"), icon);
+        markerEndLayer.addMarker(marker_e);
+
+        //경유지 마커 제거
+        markerWaypointLayer.clearMarkers();
+
+        // 3. 경유지 심볼 찍기
+        map.addLayer(markerWaypointLayer);
+        for(var i = 1; i < addr_length -1; i++){
+          var t = 'http://tmapapis.sktelecom.com/upload/tmap/marker/pin_r_m_' + (i + 1) + '.png';
+          var size = new Tmap.Size(24, 38);
+          var offset = new Tmap.Pixel(-(size.w / 2), -size.h);
+          var icon = new Tmap.IconHtml("<img src=" + t + " />", size, offset);
+          var marker = new Tmap.Marker(new Tmap.LonLat(addr[i][1], addr[i][0]).transform("EPSG:4326", "EPSG:3857"), icon);
+          markerWaypointLayer.addMarker(marker);
+
+        }
+
+        // 4. 경로 탐색 API 사용요청
+        var startX = Number(addr[0][1]);
+        var startY = Number(addr[0][0]);
+        var endX = Number(addr[addr_length -1][1]);
+        var endY = Number(addr[addr_length -1][0]);
+        var passList = "";
+        for(var i = 1; i< addr_length -2; i++){
+          passList = passList + addr[i][1] + "," + addr[i][0] + "_"
+        }
+        passList = passList + addr[addr_length-2][1] + "," + addr[addr_length-2][0];
+        var prtcl;
+        var headers = {};
+        headers["appKey"]="7ad5e39d-84cc-4a33-98ee-fbf820a62181";
+        $.ajax({
+          method:"POST", headers : headers, url:"https://api2.sktelecom.com/tmap/routes?version=1&format=xml",//
+		      async:false,
+          data:{
+			         startX : startX,
+			         startY : startY,
+			         endX : endX,
+			         endY : endY,
+			         passList : passList,
+			         reqCoordType : "WGS84GEO",
+			         resCoordType : "EPSG3857",
+			         angle : "172",
+			         searchOption : "0",
+			         trafficInfo : "Y" //교통정보 표출 옵션입니다.
+		      },
+
+          success:function(response){
+            prtcl = response;
+            markerStartLayer.clearMarkers();
+            markerEndLayer.clearMarkers();
+
+            var trafficColors = {
+              extractStyles:true,
+              trafficDefaultColor:"#1594d8",
+              trafficType1Color:"#1594d8", //원할
+				      trafficType2Color:"#1594d8", //지체
+				      trafficType3Color:"#1594d8", //정체
+            };
+
+            var kmlForm = new Tmap.Format.KML(trafficColors).readTraffic(prtcl);
+            routeLayer = new Tmap.Layer.Vector("vectorLayerID");
+            routeLayer.addFeatures(kmlForm);
+            map.addLayer(routeLayer);
+          }
+
+
+        })
+
+      }
+
+		</script>
+    </div>
+    </head>
+    <body onload="initTmap();">
+        <div id="map_div">
+        </div>
+        <div>
+        </div>
+    </body>
+    <div style = "left:72%; top:0%; position:absolute; font-size: 20px;">
+      <script type="text/javascript">
+        var ways = ["카멜리아힐","오셜록티뮤지엄","안덕계곡","용머리해안변","소인국 테마파크","포레스트 판타지아","항공우주박물관",
+        "화순곶자왈생태탐방숲길","세계자동차제주박물관","헬로키티 아일랜드","귤밭 76번지","사계해변","마라도 잠수함","송악산",
+        "노리매 공원","모슬포항","알뜨르 비행장","운진항","환상숲 곶자왈 공원","생각하는정원","유리의성","수월봉","생이기정",
+        "청수곶자왈","제주 현대 미술관","라온 골프클럽","판포포구","신창리포구","낙천리아홉굿의자마을","싱계물공원","협재해수욕장",
+        "금늠해수욕장","한림공원","월령 선인장 군락지","더마파크","금능석물원","한림항","그리스 신화 박물관 / 트릭아이 미술관",
+        "제주 돌마을 공원 / 제주 선인장 마을","곽지해수욕장","애월근린공원","애월한담 해안 산책로","애월항","선운정사","제주공룡랜드",
+        "연화못","장전리 벚꽃축제길","고내리포구","테디베어사파리 테지움","렛츠런파크 제주"];
+
+        function inittext(){
+          var addr_num = JSON.parse("{{finalpath}}");
+          var time = JSON.parse("{{finaltime}}");
+          var addr_length = {{length|tojson}};
+          document.write("최적의 경로 (유동인구, 이동시간 기반)</br></br>");
+          for(var i=0; i< addr_length; i++){
+            document.write(i+1 + "번째 여행지 : " + ways[addr_num[i]] + "</br>");
+            if(i< (addr_length -1))
+              document.write("</br>   ↓           이동시간 : " + time[i] + "분</br></br>");
+          }
+        }
+        inittext()
+      </script>
+    </div>
+</html>
