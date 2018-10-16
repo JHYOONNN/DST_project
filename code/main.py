@@ -46,6 +46,7 @@ def cal_best_route():
     tps_algo.find_path(all_node, all_node[0], [], 0, 0,my_time, ft, fp, routes)
     choice = tps_algo.best_choice(routes)
     print("finding path using data is done")
+    print(choice)
     for i in range(0, len(choice) -1):
         using_time.append(ft[all_node.index(choice[i])][all_node.index(choice[i+1])])
     return (choice, using_time)
