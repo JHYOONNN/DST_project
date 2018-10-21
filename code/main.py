@@ -1,3 +1,7 @@
+'''
+main 에서는 각각의 file의 function을 이용해 data를 가공해 받아오고
+최종적으로 routes.py로 보내줌
+'''
 import numpy as np
 import datetime as dt
 

@@ -1,3 +1,6 @@
+'''
+유동인구 csv파일을 이용해 필요한 grid 범위안의 유동인구를 시간대별로 종합해 비율로 변환해 return해주는 부분
+'''
 import numpy as np
 
 my_data = np.genfromtxt('./csv/temp.csv', encoding="utf8", dtype = np.float64) # 유동인구 정보

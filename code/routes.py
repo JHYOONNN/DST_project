@@ -1,3 +1,10 @@
+'''
+Flask를 이용해 local server를 구동하고 index.html로 계산된 값들을 보내주는 부분
+지도를 띄우고 경로를 출력해주는 것은 index.html 코드에 들어있음
+
+디버깅이 완료되면 local server를 통해 http://127.0.0.1:5000 에서 출력을 확인할 수 있음
+'''
+
 from flask import Flask, render_template
 import json
 import numpy as np

@@ -1,3 +1,7 @@
+'''
+googlemaps API를 이용해 각각의 노드에 대한 주소지를 위.경도 좌표계로 변환해 return 해준다.
+'''
+
 import googlemaps
 import numpy as np
 

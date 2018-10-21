@@ -1,3 +1,7 @@
+'''
+requests를 이용해 네이버지도에 요청을 보내 필요한 경로에 대한 이동시간을 파싱해 오는 부분
+'''
+
 import requests as r
 import json
 import numpy as np
